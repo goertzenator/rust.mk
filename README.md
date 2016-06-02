@@ -4,4 +4,4 @@ This plugin for [`erlang.mk`](https://github.com/ninenines/erlang.mk) enables th
 The plugin will build all crates in the `crates` directory and copy all binary outputs to `priv/rust/<cratename>/<binary>`.
 Rust and this plugin are suitable for port programs, NIF modules, and drivers.
 
-
+NOTE: This plugin requires the command [`jq`](https://stedolan.github.io/jq/download/) (JSON processor).
