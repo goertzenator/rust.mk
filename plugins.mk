@@ -19,7 +19,7 @@
 RS_CARGO_FLAGS ?= -q
 RS_CARGO ?= cargo
 RS_CRATES_DIR ?= $(CURDIR)/crates
-RS_OUTPUT_DIR ?= $(CURDIR)/priv/rust
+RS_OUTPUT_DIR ?= $(CURDIR)/priv/crates
 
 
 # target subdir
