@@ -2,7 +2,7 @@
 
 This plugin for [`erlang.mk`](https://github.com/ninenines/erlang.mk) enables the automatic building of Rust crates in an Erlang application.
 The plugin will build all crates in the `crates` directory and copy all binary outputs to `priv/rust/<cratename>/<binary>`.
-Rust and this plugin are suitable for port programs, NIF modules, and drivers.
+See the test application in this repository for an example of a port program and NIF module implemented in Rust.
 
 # Using the plugin
 Use the plugin by adding `BUILD_DEPS` and `DEP_PLUGINS` as in this Makefile:
