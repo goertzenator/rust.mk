@@ -1,0 +1,14 @@
+PROJECT = rustmk_demo
+
+DEPS = find_crate
+
+# Normal apps would include rust.mk like this:
+#BUILD_DEPS = rust.mk
+#DEP_PLUGINS = rust.mk
+
+
+
+include erlang.mk
+
+# But because we're a subdir of the rust.mk repo we have to do this:
+include ../../plugins.mk

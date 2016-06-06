@@ -4,4 +4,48 @@ This plugin for [`erlang.mk`](https://github.com/ninenines/erlang.mk) enables th
 The plugin will build all crates in the `crates` directory and copy all binary outputs to `priv/rust/<cratename>/<binary>`.
 Rust and this plugin are suitable for port programs, NIF modules, and drivers.
 
-NOTE: This plugin requires the command [`jq`](https://stedolan.github.io/jq/download/) (JSON processor).
+# Using the plugin
+Use the plugin by adding `BUILD_DEPS` and `DEP_PLUGINS` as in this Makefile:
+
+``` Makefile
+PROJECT = myapp
+BUILD_DEPS = rust.mk
+DEP_PLUGINS = rust.mk
+
+include erlang.mk
+```
+This will automatically download and use `rust.mk`.
+
+
+# Application structure with Rust crates
+To add crates to an Erlang application, place them in a `crates/` folder.  All crates found within will be build and resulting artifacts will be placed in the `priv/crates/` folder.
+
+The library application [`find_crate`](https://github.com/goertzenator/find_crate) may be used to reliably find artifacts in `priv/crates` in a cross-platform manner.
+
+
+Project structure:
+```
+myapp/
+    Makefile
+    erlang.mk
+    ebin/
+        ...
+    src/
+         ...
+    crates/
+        foo_nif/
+            Cargo.toml
+            ...
+        bar_port/
+            Cargo.toml
+             ...
+    priv/
+        crates/
+            foo_nif/
+                libfoo_nif.so
+            bar_port/
+                bar_port
+
+```
+
+

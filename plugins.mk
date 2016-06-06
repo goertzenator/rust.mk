@@ -16,7 +16,7 @@
 
 # flags, tools, dirs
 
-RS_CARGO_FLAGS ?= -q
+RS_CARGO_FLAGS ?= -q --release
 RS_CARGO ?= cargo
 RS_CRATES_DIR ?= $(CURDIR)/crates
 RS_OUTPUT_DIR ?= $(CURDIR)/priv/crates
@@ -49,16 +49,20 @@ rs_build_verbose = $(rs_build_verbose_$(V))
 # build rules
 
 app:: app-crates
+apps-eunit:: app-crates
 app-crates: $(RS_OUTPUT_SUBDIRS)
 .PHONY: app-crates $(RS_OUTPUT_SUBDIRS)
 
 $(RS_OUTPUT_SUBDIRS): $(RS_OUTPUT_DIR)/%: $(RS_CRATES_DIR)/%
 	@rm -rf $@
 	@mkdir -p $@
-	@cd $</target/$(RS_TARGET_SUBDIR) && \
-		cp $$($(RS_CARGO) read-manifest --manifest-path=$</Cargo.toml | \
-		jq -Mr '.targets|.[]|select(.kind|any(. == "bin")).name') \
-		$@
+
+	@cd $< && cp $$(find . -maxdepth 3 -path "./target/*/*" -type f) $@
+
+#	cd $</target/$(RS_TARGET_SUBDIR) && \
+#		cp $$($(RS_CARGO) read-manifest --manifest-path=$</Cargo.toml | \
+#		jq -Mr '.targets|.[]|select(.kind|any(. == "bin" or . == "dylib")).name')) \
+#		$@
 	
 .PHONY: $(RS_CRATEDIRS)
 $(RS_CRATEDIRS): 

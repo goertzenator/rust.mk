@@ -1,0 +1,11 @@
+language: erlang
+opt_release: 
+  - 18.2.1
+
+script: cd tests/rustmkdemo && make tests
+
+before_install:
+  - curl -sSf https://static.rust-lang.org/rustup.sh | sh
+
+before_script: 
+  - kerl list installations
