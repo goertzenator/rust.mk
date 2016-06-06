@@ -56,7 +56,8 @@ encode({bar, Y}) -> [2, Y].
 decode([Int]) -> Int.
 
 short_test_() ->
-	start(),
-	[ ?_assertEqual(13, foo(12)),
-	  ?_assertEqual(24, bar(12)) ].
-
+	{ setup,
+	  fun() -> start() end,
+	  fun(_) -> stop() end,
+	  [ ?_assertEqual(13, foo(12)),
+	    ?_assertEqual(24, bar(12)) ]}.
