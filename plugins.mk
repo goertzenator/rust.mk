@@ -16,7 +16,22 @@
 
 # flags, tools, dirs
 
-RS_CARGO_FLAGS ?= -q --release
+# OSX need extra flags for NIF building
+RS_CARGO_FLAGS_DARWIN  ?= -q --release -- --codegen link-args='-flat_namespace -undefined suppress'
+RS_CARGO_FLAGS_MSYS2   ?= -q --release
+RS_CARGO_FLAGS_FREEBSD ?= -q --release
+RS_CARGO_FLAGS_LINUX   ?= -q --release
+
+ifeq ($(PLATFORM),msys2)
+	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_MSYS2)
+else ifeq ($(PLATFORM),darwin)
+	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_DARWIN)
+else ifeq ($(PLATFORM),freebsd)
+	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_FREEBSD)
+else ifeq ($(PLATFORM),linux)
+	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_LINUX)
+endif
+
 RS_CARGO ?= cargo
 RS_CRATES_DIR ?= $(CURDIR)/crates
 RS_OUTPUT_DIR ?= $(CURDIR)/priv/crates
@@ -58,6 +73,10 @@ $(RS_OUTPUT_SUBDIRS): $(RS_OUTPUT_DIR)/%: $(RS_CRATES_DIR)/%
 	@mkdir -p $@
 
 	@cd $< && cp $$(find . -maxdepth 3 -path "./target/*/*" -type f) $@
+
+# 	rename OSX .dylib to .so
+	[ -f $@/*.dylib ] && (for file in $@/*.dylib; do mv "$file" "${file%.dylib}.so"; done) || true
+	#[ -f $@/*.so ] && (for file in $@/*.so; do mv "$$file" "$${file%.so}.uprple"; done) || true
 
 #	cd $</target/$(RS_TARGET_SUBDIR) && \
 #		cp $$($(RS_CARGO) read-manifest --manifest-path=$</Cargo.toml | \
