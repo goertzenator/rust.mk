@@ -85,7 +85,7 @@ $(RS_OUTPUT_SUBDIRS): $(RS_OUTPUT_DIR)/%: $(RS_CRATES_DIR)/%
 	
 .PHONY: $(RS_CRATEDIRS)
 $(RS_CRATEDIRS): 
-	$(rs_build_verbose) cd $@ && $(RS_CARGO) build $(RS_CARGO_FLAGS)
+	$(rs_build_verbose) cd $@ && $(RS_CARGO) rustc $(RS_CARGO_FLAGS)
 
 
 clean:: rust-clean
