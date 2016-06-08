@@ -9,8 +9,8 @@ Use the plugin by adding `BUILD_DEPS` and `DEP_PLUGINS` as in this Makefile:
 
 ``` Makefile
 PROJECT = myapp
-BUILD_DEPS = rust.mk
-DEP_PLUGINS = rust.mk
+BUILD_DEPS = rust_mk
+DEP_PLUGINS = rust_mk
 
 include erlang.mk
 ```
