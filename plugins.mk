@@ -75,7 +75,7 @@ $(RS_OUTPUT_SUBDIRS): $(RS_OUTPUT_DIR)/%: $(RS_CRATES_DIR)/%
 	@cd $< && cp $$(find . -maxdepth 3 -path "./target/*/*" -type f) $@
 
 # 	rename OSX .dylib to .so
-	[ -f $@/*.dylib ] && (for file in $@/*.dylib; do mv "$file" "${file%.dylib}.so"; done) || true
+	[ -f $@/*.dylib ] && (for file in $@/*.dylib; do mv "$$file" "$${file%.dylib}.so"; done) || true
 	#[ -f $@/*.so ] && (for file in $@/*.so; do mv "$$file" "$${file%.so}.uprple"; done) || true
 
 #	cd $</target/$(RS_TARGET_SUBDIR) && \
