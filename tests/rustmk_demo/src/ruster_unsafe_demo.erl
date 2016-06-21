@@ -6,7 +6,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 init() ->
-	{ok, Lib} = find_crate:find_library(rustmk_demo, "ruster_unsafe_demo", "ruster_unsafe_demo"),
+    {ok, Lib} = find_crate:find_library(rustmk_demo, "ruster_unsafe_demo", "ruster_unsafe_demo"),
     ok = erlang:load_nif(Lib, 0).
 
 static_atom() ->
@@ -19,6 +19,6 @@ tuple_add(_X) ->
     exit(nif_library_not_loaded).
 
 short_test_() ->
-	[ ?_assertEqual('static atom from Rust', static_atom()),
-	  ?_assertEqual(7, native_add(3,4)),
-	  ?_assertEqual(9, tuple_add({4,5})) ].
+    [ ?_assertEqual('static atom from Rust', static_atom()),
+      ?_assertEqual(7, native_add(3,4)),
+      ?_assertEqual(9, tuple_add({4,5})) ].
