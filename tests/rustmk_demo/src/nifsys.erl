@@ -1,4 +1,4 @@
--module(ruster_unsafe_demo).
+-module(nifsys).
 
 -export([static_atom/0,native_add/2, tuple_add/1]).
 -on_load(init/0).
@@ -6,7 +6,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 init() ->
-    {ok, Lib} = find_crate:find_library(rustmk_demo, "ruster_unsafe_demo", "ruster_unsafe_demo"),
+    {ok, Lib} = find_crate:find_library(rustmk_demo, "nifsys", "nifsys"),
     ok = erlang:load_nif(Lib, 0).
 
 static_atom() ->

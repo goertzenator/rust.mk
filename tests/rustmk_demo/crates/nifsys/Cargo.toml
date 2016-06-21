@@ -1,11 +1,11 @@
 [package]
-name = "ruster_unsafe_demo"
+name = "nifsys"
 version = "0.0.2"
 authors = ["Daniel Goertzen <daniel.goertzen@gmail.com>"]
 
 [lib]
-name = "ruster_unsafe_demo"
+name = "nifsys"
 crate-type = ["dylib"]
 
 [dependencies]
-ruster_unsafe = "0.4.0"
+erlang_nif-sys = "0.4"

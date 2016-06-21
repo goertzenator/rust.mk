@@ -1,10 +1,10 @@
 #[macro_use]
-extern crate ruster_unsafe;
-use ruster_unsafe::*;
+extern crate erlang_nif_sys;
+use erlang_nif_sys::*;
 use std::mem::uninitialized;
 
 /// Create NIF module data and init function.
-nif_init!(b"ruster_unsafe_demo\0",
+nif_init!(b"nifsys\0",
           Some(load),
           Some(reload),
           Some(upgrade),
