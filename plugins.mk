@@ -16,7 +16,22 @@
 
 # flags, tools, dirs
 
-RS_CARGO_FLAGS ?= -q --release
+# OSX need extra flags for NIF building
+RS_CARGO_FLAGS_DARWIN  ?= -q --release -- --codegen link-args='-flat_namespace -undefined suppress'
+RS_CARGO_FLAGS_MSYS2   ?= -q --release
+RS_CARGO_FLAGS_FREEBSD ?= -q --release
+RS_CARGO_FLAGS_LINUX   ?= -q --release
+
+ifeq ($(PLATFORM),msys2)
+	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_MSYS2)
+else ifeq ($(PLATFORM),darwin)
+	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_DARWIN)
+else ifeq ($(PLATFORM),freebsd)
+	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_FREEBSD)
+else ifeq ($(PLATFORM),linux)
+	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_LINUX)
+endif
+
 RS_CARGO ?= cargo
 RS_CRATES_DIR ?= $(CURDIR)/crates
 RS_OUTPUT_DIR ?= $(CURDIR)/priv/crates
@@ -53,20 +68,32 @@ apps-eunit:: app-crates
 app-crates: $(RS_OUTPUT_SUBDIRS)
 .PHONY: app-crates $(RS_OUTPUT_SUBDIRS)
 
+
+# install crate binaries
+
 $(RS_OUTPUT_SUBDIRS): $(RS_OUTPUT_DIR)/%: $(RS_CRATES_DIR)/%
 	@rm -rf $@
 	@mkdir -p $@
 
 	@cd $< && cp $$(find . -maxdepth 3 -path "./target/*/*" -type f) $@
 
+# 	rename OSX .dylib to .so, because that's what erlang:load_nif() expects.
+	[ -f $@/*.dylib ] && (for file in $@/*.dylib; do mv "$$file" "$${file%.dylib}.so"; done) || true
+
+
+# compile crate
+	
+.PHONY: $(RS_CRATEDIRS)
+$(RS_CRATEDIRS): 
+	$(rs_build_verbose) cd $@ && $(RS_CARGO) rustc $(RS_CARGO_FLAGS)
+
+# FIXME: rustc only builds one target at a time.  Use variation of code below to build
+# multi-target crates.
 #	cd $</target/$(RS_TARGET_SUBDIR) && \
 #		cp $$($(RS_CARGO) read-manifest --manifest-path=$</Cargo.toml | \
 #		jq -Mr '.targets|.[]|select(.kind|any(. == "bin" or . == "dylib")).name')) \
 #		$@
-	
-.PHONY: $(RS_CRATEDIRS)
-$(RS_CRATEDIRS): 
-	$(rs_build_verbose) cd $@ && $(RS_CARGO) build $(RS_CARGO_FLAGS)
+
 
 
 clean:: rust-clean
