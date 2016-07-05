@@ -64,7 +64,7 @@ rs_build_verbose = $(rs_build_verbose_$(V))
 # build rules
 
 app:: app-crates
-apps-eunit:: app-crates
+test-build:: app-crates
 app-crates: $(RS_OUTPUT_SUBDIRS)
 .PHONY: app-crates $(RS_OUTPUT_SUBDIRS)
 
@@ -82,9 +82,9 @@ $(RS_OUTPUT_SUBDIRS): $(RS_OUTPUT_DIR)/%: $(RS_CRATES_DIR)/%
 
 
 # compile crate
-	
+
 .PHONY: $(RS_CRATEDIRS)
-$(RS_CRATEDIRS): 
+$(RS_CRATEDIRS):
 	$(rs_build_verbose) cd $@ && $(RS_CARGO) rustc $(RS_CARGO_FLAGS)
 
 # FIXME: rustc only builds one target at a time.  Use variation of code below to build

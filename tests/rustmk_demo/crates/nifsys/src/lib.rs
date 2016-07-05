@@ -13,7 +13,7 @@ nif_init!(b"nifsys\0",
           nif!(b"native_add\0", 2, native_add, ERL_NIF_DIRTY_JOB_IO_BOUND),
           nif!(b"tuple_add\0", 1, tuple_add, ERL_NIF_DIRTY_JOB_CPU_BOUND));
 
-static mut my_atom: ERL_NIF_TERM = 0 as ERL_NIF_TERM;
+static mut my_atom: Option<ERL_NIF_TERM> = None;
 
 /// Initialize static atom.
 extern "C" fn load(env: *mut ErlNifEnv,
@@ -21,7 +21,7 @@ extern "C" fn load(env: *mut ErlNifEnv,
                    _load_info: ERL_NIF_TERM)
                    -> c_int {
     unsafe {
-        my_atom = enif_make_atom(env, b"static atom from Rust\0" as *const u8);
+        my_atom = Some(enif_make_atom(env, b"static atom from Rust\0" as *const u8));
         0
     }
 }
@@ -51,7 +51,7 @@ extern "C" fn static_atom(_env: *mut ErlNifEnv,
                           _argc: c_int,
                           _args: *const ERL_NIF_TERM)
                           -> ERL_NIF_TERM {
-    unsafe { my_atom }
+    unsafe { my_atom.unwrap() }
 }
 
 /// Add two integers. `native_add(A,B) -> A+B.`

@@ -18,7 +18,7 @@ This will automatically download and use `rust.mk`.
 
 
 # Application structure with Rust crates
-To add crates to an Erlang application, place them in a `crates/` folder.  All crates found within will be build and resulting artifacts will be placed in the `priv/crates/` folder.
+To add crates to an Erlang application, place them in a `crates/` folder.  All crates found within will be built and resulting artifacts will be placed in the `priv/crates/` folder.
 
 The library application [`find_crate`](https://github.com/goertzenator/find_crate) may be used to reliably find artifacts in `priv/crates` in a cross-platform manner.
 
