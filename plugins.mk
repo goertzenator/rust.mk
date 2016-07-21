@@ -13,91 +13,39 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 
+# This plugin is a thin wrapper around https://github.com/goertzenator/cargo-erlangapp
+# which is automatically downloaded and used.
 
-# flags, tools, dirs
+CARGO_BUILD_FLAGS ?= --release
+CARGO_TESTBUILD_FLAGS ?=
+CARGO_TEST_FLAGS ?=
+CARGO_CLEAN_FLAGS ?=
 
-# OSX need extra flags for NIF building
-RS_CARGO_FLAGS_DARWIN  ?= -q --release -- --codegen link-args='-flat_namespace -undefined suppress'
-RS_CARGO_FLAGS_MSYS2   ?= -q --release
-RS_CARGO_FLAGS_FREEBSD ?= -q --release
-RS_CARGO_FLAGS_LINUX   ?= -q --release
+CARGO_ERLANGAPP_ROOT = .cargo-erlangapp
+CARGO_ERLANGAPP = $(CARGO_ERLANGAPP_ROOT)/bin/cargo-erlangapp
 
-ifeq ($(PLATFORM),msys2)
-	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_MSYS2)
-else ifeq ($(PLATFORM),darwin)
-	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_DARWIN)
-else ifeq ($(PLATFORM),freebsd)
-	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_FREEBSD)
-else ifeq ($(PLATFORM),linux)
-	RS_CARGO_FLAGS ?= $(RS_CARGO_FLAGS_LINUX)
-endif
+$(CARGO_ERLANGAPP):
+	cargo install --root=$(CARGO_ERLANGAPP_ROOT) --vers=0.1.0 cargo-erlangapp
 
-RS_CARGO ?= cargo
-RS_CRATES_DIR ?= $(CURDIR)/crates
-RS_OUTPUT_DIR ?= $(CURDIR)/priv/crates
+.PHONY: rust-build rust-testbuild rust-test rust-clean rust-distclean
 
-
-# target subdir
-
-ifeq (,$(findstring --release,$(RS_RUSTC_FLAGS)))
-RS_TARGET_SUBDIR ?= debug
-else
-RS_TARGET_SUBDIR ?= release
-endif
-
-
-
-# sources and targets
-
-RS_TOMLS ?= $(wildcard $(RS_CRATES_DIR)/*/Cargo.toml )
-RS_CRATEDIRS ?= $(patsubst %/,%,$(dir $(RS_TOMLS)))
-RS_CRATENAMES ?= $(notdir $(RS_CRATEDIRS))
-RS_OUTPUT_SUBDIRS ?= $(patsubst %,$(RS_OUTPUT_DIR)/%, $(RS_CRATENAMES))
-
-
-#verbosity
-
-rs_build_verbose_0 = @echo " CARGO " $(shell basename $@);
-rs_build_verbose = $(rs_build_verbose_$(V))
-
-
-# build rules
-
-app:: app-crates
-test-build:: app-crates
-app-crates: $(RS_OUTPUT_SUBDIRS)
-.PHONY: app-crates $(RS_OUTPUT_SUBDIRS)
-
-
-# install crate binaries
-
-$(RS_OUTPUT_SUBDIRS): $(RS_OUTPUT_DIR)/%: $(RS_CRATES_DIR)/%
-	@rm -rf $@
-	@mkdir -p $@
-
-	@cd $< && cp $$(find . -maxdepth 3 -path "./target/*/*" -type f) $@
-
-# 	rename OSX .dylib to .so, because that's what erlang:load_nif() expects.
-	[ -f $@/*.dylib ] && (for file in $@/*.dylib; do mv "$$file" "$${file%.dylib}.so"; done) || true
-
-
-# compile crate
-
-.PHONY: $(RS_CRATEDIRS)
-$(RS_CRATEDIRS):
-	$(rs_build_verbose) cd $@ && $(RS_CARGO) rustc $(RS_CARGO_FLAGS)
-
-# FIXME: rustc only builds one target at a time.  Use variation of code below to build
-# multi-target crates.
-#	cd $</target/$(RS_TARGET_SUBDIR) && \
-#		cp $$($(RS_CARGO) read-manifest --manifest-path=$</Cargo.toml | \
-#		jq -Mr '.targets|.[]|select(.kind|any(. == "bin" or . == "dylib")).name')) \
-#		$@
-
-
-
+app:: rust-build
+test-build:: rust-testbuild
+tests:: rust-test
 clean:: rust-clean
-.PHONY: rust-clean
-rust-clean:
-	$(gen_verbose) rm -rf $(RS_OUTPUT_DIR); \
-	for crate in $(RS_CRATEDIRS); do cd $$crate && $(RS_CARGO) clean; done
+distclean:: rust-clean rust-distclean
+
+rust-build: $(CARGO_ERLANGAPP)
+	$(CARGO_ERLANGAPP) build $(CARGO_BUILD_FLAGS)
+
+rust-testbuild: $(CARGO_ERLANGAPP)
+	$(CARGO_ERLANGAPP) build $(CARGO_TESTBUILD_FLAGS)
+
+rust-test: $(CARGO_ERLANGAPP)
+	$(CARGO_ERLANGAPP) test $(CARGO_TEST_FLAGS)
+
+rust-clean: $(CARGO_ERLANGAPP)
+	$(CARGO_ERLANGAPP) clean $(CARGO_CLEAN_FLAGS)
+
+rust-distclean:
+	rm -rf $(CARGO_ERLANGAPP_ROOT)
