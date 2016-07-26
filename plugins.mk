@@ -25,7 +25,7 @@ CARGO_ERLANGAPP_ROOT = .cargo-erlangapp
 CARGO_ERLANGAPP = $(CARGO_ERLANGAPP_ROOT)/bin/cargo-erlangapp
 
 $(CARGO_ERLANGAPP):
-	cargo install --root=$(CARGO_ERLANGAPP_ROOT) --vers=0.1.1 cargo-erlangapp
+	cargo install --root=$(CARGO_ERLANGAPP_ROOT) --vers=0.1 cargo-erlangapp
 
 .PHONY: rust-build rust-testbuild rust-test rust-clean rust-distclean
 
