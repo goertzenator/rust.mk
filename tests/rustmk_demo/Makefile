@@ -3,8 +3,8 @@ PROJECT = rustmk_demo
 DEPS = find_crate
 
 # Normal apps would include rust.mk like this:
-#BUILD_DEPS = rust.mk
-#DEP_PLUGINS = rust.mk
+#BUILD_DEPS = rust_mk
+#DEP_PLUGINS = rust_mk
 
 
 
