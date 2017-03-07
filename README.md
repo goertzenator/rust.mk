@@ -1,7 +1,7 @@
 # rust.mk   [![Build Status](https://travis-ci.org/goertzenator/rust.mk.svg?branch=master)](https://travis-ci.org/goertzenator/rust.mk)
 
 This plugin for [`erlang.mk`](https://github.com/ninenines/erlang.mk) enables the automatic building of Rust crates in an Erlang application.
-The plugin will build all crates in the `crates` directory and copy all binary outputs to `priv/rust/<cratename>/<binary>`.
+The plugin will build all crates in the `crates` directory and copy all binary outputs to `priv/crates/<cratename>/<binary>`.
 See the test application in this repository for an example of a port program and NIF module implemented in Rust.
 
 # Using the plugin
